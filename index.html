@@ -8,32 +8,65 @@
 </head>
 <body>
 
-<div class="app">
-
-<header>
-  <div class="logo">🌳 Stranger Chat Park</div>
-  <div class="online"><span id="onlineCount">0</span> online</div>
-</header>
+<header>🌳 Stranger Chat Park</header>
 
 <!-- LOGIN -->
-<div id="loginBox" class="card">
-  <h3>Welcome</h3>
+<section id="login" class="card">
+  <h2>Welcome</h2>
   <input id="email" placeholder="Email (optional)">
   <input id="password" type="password" placeholder="Password (min 6 chars)">
   <button onclick="register()">Register</button>
-  <button class="outline" onclick="login()">Login</button>
-  <div class="divider">OR</div>
+  <button class="outline" onclick="loginUser()">Login</button>
   <button class="ghost" onclick="guest()">Continue as Guest</button>
-</div>
+</section>
 
-<!-- PROFILE -->
-<div id="profileBox" class="card" style="display:none;">
-  <h3>Enter Details</h3>
-  <input id="username" placeholder="Nickname">
-  <select id="gender">
-    <option value="">I am</option>
-    <option value="male">Male</option>
-    <option value="female">Female</option>
+<!-- HOME -->
+<section id="home" class="card hidden">
+  <h2>Home</h2>
+  <button onclick="goRandom()">🔀 Random Chat</button>
+  <button onclick="goGroup()">👥 Group Chat</button>
+</section>
+
+<!-- INTERESTS -->
+<section id="interest" class="card hidden">
+  <h3>Your Interests (optional)</h3>
+  <input id="interestInput" placeholder="music, movies, friends">
+  <button onclick="startSearch()">Start Searching</button>
+</section>
+
+<!-- SEARCH -->
+<section id="search" class="card hidden">
+  <h3>Finding Partner…</h3>
+  <div id="timer">Elapsed: 00:00</div>
+  <button class="outline" onclick="cancelSearch()">Cancel</button>
+</section>
+
+<!-- PRIVATE CHAT -->
+<section id="chat" class="card hidden">
+  <h3>Stranger</h3>
+  <div id="messages" class="messages"></div>
+  <input id="msgInput" placeholder="Type message">
+  <button onclick="sendMsg()">Send</button>
+  <button class="danger" onclick="endChat()">End Chat</button>
+</section>
+
+<!-- GROUP CHAT -->
+<section id="group" class="card hidden">
+  <h3>Public Group</h3>
+  <div id="groupMessages" class="messages"></div>
+  <input id="groupInput" placeholder="Type message">
+  <button onclick="sendGroup()">Send</button>
+  <button class="danger" onclick="backHome()">Back</button>
+</section>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script src="app.js"></script>
+</body>
+</html>
   </select>
   <select id="looking">
     <option value="">Looking for</option>
