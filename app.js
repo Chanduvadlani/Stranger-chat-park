@@ -1,4 +1,4 @@
-// FIREBASE CONFIG
+// FIREBASE CONFIG (FINAL – FIXED)
 const firebaseConfig = {
   apiKey: "AIzaSyDL27YgLcePboLFybnXMjeHGhsjSEvUGzk",
   authDomain: "strangerpark-chat-and-talk.firebaseapp.com",
