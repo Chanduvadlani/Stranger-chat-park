@@ -1,4 +1,4 @@
-// FIREBASE CONFIG (FINAL – FIXED)
+// FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyDL27YgLcePboLFybnXMjeHGhsjSEvUGzk",
   authDomain: "strangerpark-chat-and-talk.firebaseapp.com",
@@ -9,30 +9,142 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// PEERJS
-let peer = new Peer();
-let myPeerId = "";
-let conn = null;
-let myStream = null;
+// -------- HELPERS --------
+const show = el => el.classList.remove("hidden");
+const hide = el => el.classList.add("hidden");
 
-peer.on("open", id => myPeerId = id);
-
-// AUTH
+// -------- AUTH --------
 function register() {
   if (password.value.length < 6) return alert("Password min 6 chars");
-  auth.createUserWithEmailAndPassword(email.value, password.value)
-    .then(showProfile)
-    .catch(e => alert(e.message));
+  auth.createUserWithEmailAndPassword(email.value, password.value);
 }
 
-function login() {
-  auth.signInWithEmailAndPassword(email.value, password.value)
-    .then(showProfile)
-    .catch(e => alert(e.message));
+function loginUser() {
+  auth.signInWithEmailAndPassword(email.value, password.value);
+}
+
+function guest() {
+  auth.signInAnonymously();
+}
+
+auth.onAuthStateChanged(user => {
+  if (user) {
+    hide(login);
+    show(home);
+  }
+});
+
+// -------- NAV --------
+function goRandom() {
+  hide(home);
+  show(interest);
+}
+
+function goGroup() {
+  hide(home);
+  show(group);
+  listenGroup();
+}
+
+function backHome() {
+  hide(group);
+  show(home);
+}
+
+// -------- RANDOM SEARCH --------
+let timerInt, seconds = 0, roomId = "";
+
+function startSearch() {
+  hide(interest);
+  show(search);
+
+  seconds = 0;
+  timer.innerText = "Elapsed: 00:00";
+  timerInt = setInterval(() => {
+    seconds++;
+    timer.innerText = "Elapsed: 00:" + String(seconds).padStart(2, "0");
+  }, 1000);
+
+  findPartner();
+}
+
+function cancelSearch() {
+  clearInterval(timerInt);
+  hide(search);
+  show(home);
+}
+
+async function findPartner() {
+  const uid = auth.currentUser.uid;
+  const interest = interestInput.value || "any";
+
+  await db.collection("queue").doc(uid).set({
+    interest,
+    time: Date.now()
+  });
+
+  const snap = await db.collection("queue").where("interest", "in", [interest, "any"]).limit(2).get();
+
+  if (snap.size >= 2) {
+    const ids = snap.docs.map(d => d.id).sort();
+    roomId = ids.join("_");
+    snap.forEach(d => db.collection("queue").doc(d.id).delete());
+    openChat();
+  } else {
+    setTimeout(findPartner, 3000);
+  }
+}
+
+// -------- PRIVATE CHAT --------
+function openChat() {
+  clearInterval(timerInt);
+  hide(search);
+  show(chat);
+
+  db.collection("chats").doc(roomId)
+    .collection("msgs")
+    .orderBy("time")
+    .onSnapshot(s => {
+      messages.innerHTML = "";
+      s.forEach(d => messages.innerHTML += `<p>${d.data().msg}</p>`);
+      messages.scrollTop = messages.scrollHeight;
+    });
+}
+
+function sendMsg() {
+  if (!msgInput.value) return;
+  db.collection("chats").doc(roomId)
+    .collection("msgs")
+    .add({ msg: msgInput.value, time: Date.now() });
+  msgInput.value = "";
+}
+
+function endChat() {
+  roomId = "";
+  hide(chat);
+  show(home);
+}
+
+// -------- GROUP CHAT --------
+function listenGroup() {
+  db.collection("groups").doc("public")
+    .collection("msgs")
+    .orderBy("time")
+    .onSnapshot(s => {
+      groupMessages.innerHTML = "";
+      s.forEach(d => groupMessages.innerHTML += `<p>${d.data().msg}</p>`);
+    });
+}
+
+function sendGroup() {
+  if (!groupInput.value) return;
+  db.collection("groups").doc("public")
+    .collection("msgs")
+    .add({ msg: groupInput.value, time: Date.now() });
+  groupInput.value = "";
 }
 
 function guest() {
