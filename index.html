@@ -18,22 +18,80 @@
 <!-- LOGIN -->
 <div id="loginBox" class="card">
   <h3>Welcome</h3>
-  <p class="muted">Talk to strangers anonymously</p>
-
   <input id="email" placeholder="Email (optional)">
   <input id="password" type="password" placeholder="Password (min 6 chars)">
-
-  <button onclick="register()">Create Account</button>
+  <button onclick="register()">Register</button>
   <button class="outline" onclick="login()">Login</button>
-
   <div class="divider">OR</div>
-  <button class="ghost" onclick="guest()">Continue without login</button>
+  <button class="ghost" onclick="guest()">Continue as Guest</button>
 </div>
 
 <!-- PROFILE -->
 <div id="profileBox" class="card" style="display:none;">
-  <h3>Choose a nickname</h3>
+  <h3>Enter Details</h3>
   <input id="username" placeholder="Nickname">
+  <select id="gender">
+    <option value="">I am</option>
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+  </select>
+  <select id="looking">
+    <option value="">Looking for</option>
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+  </select>
+  <button onclick="startMatching()">Start Chat</button>
+</div>
+
+<!-- WAIT -->
+<div id="waitingBox" class="card" style="display:none;">
+  <h3>Finding a stranger…</h3>
+  <div class="loader"></div>
+</div>
+
+<!-- VIDEO CHAT -->
+<div id="chatBox" style="display:none;">
+  <div class="videos">
+    <video id="myVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+  </div>
+  <div class="controls">
+    <button onclick="toggleMic()">🎙</button>
+    <button onclick="toggleCam()">🎥</button>
+    <button class="danger" onclick="nextStranger()">Next</button>
+  </div>
+</div>
+
+<!-- ROOMS -->
+<div id="roomsBox" class="card" style="display:none;">
+  <h3>Public Rooms</h3>
+  <div class="room" onclick="joinRoom('telugu')">Telugu Chat</div>
+  <div class="room" onclick="joinRoom('friends')">Make Friends</div>
+  <div class="room" onclick="joinRoom('random')">Random Talk</div>
+</div>
+
+<!-- ROOM CHAT -->
+<div id="roomChatBox" class="card" style="display:none;">
+  <h3 id="roomTitle"></h3>
+  <div id="roomMessages" class="roomMessages"></div>
+  <input id="roomMsg" placeholder="Type message">
+  <button onclick="sendRoomMsg()">Send</button>
+  <button class="danger" onclick="leaveRoom()">Leave</button>
+</div>
+
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- PeerJS -->
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+<script src="app.js"></script>
+</body>
+</html>
 
   <select id="gender">
     <option value="">I am</option>
